@@ -1,0 +1,261 @@
+{
+  "pluginAlias": "RoborockVacuumPlatformUpdate",
+  "pluginType": "platform",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "email": {
+        "title": "Email",
+        "type": "string",
+        "format": "email",
+        "description": "Roborock account email",
+        "required": true
+      },
+      "password": {
+        "title": "Password",
+        "type": "string",
+        "placeholder": "Password",
+        "description": "Roborock account password",
+        "required": true
+      },
+      "baseURL": {
+        "title": "Base URL",
+        "type": "string",
+        "default": "usiot.roborock.com",
+        "description": "Roborock API endpoint. USA: usiot.roborock.com, Europe: euiot.roborock.com, China: cn.iot.roborock.com"
+      },
+      "debugMode": {
+        "title": "Debug Mode",
+        "description": "When enabled, debug messages will be written to the log.",
+        "type": "boolean",
+        "default": false
+      },
+      "skipDevices": {
+        "title": "Skip Device",
+        "type": "string",
+        "description": "Device ID to skip"
+      },
+      "serviceType": {
+        "title": "Service Type",
+        "type": "string",
+        "default": "fan",
+        "enum": ["fan", "switch"],
+        "description": "Load the vacuum as a fan (ON/OFF + speed control) or a switch (ON/OFF only)"
+      },
+      "pause": {
+        "title": "Show Pause Switch",
+        "type": "boolean",
+        "default": false,
+        "description": "When enabled, HomeKit shows an additional switch for pause/resume"
+      },
+      "pauseWord": {
+        "title": "Pause Word",
+        "type": "string",
+        "default": "Pause",
+        "description": "Used for naming the Pause switch",
+        "condition": {
+          "functionBody": "return model.pause === true"
+        }
+      },
+      "findMe": {
+        "title": "Show Find Me Switch",
+        "type": "boolean",
+        "default": false,
+        "description": "When enabled, HomeKit shows an additional switch for 'find me'"
+      },
+      "findMeWord": {
+        "title": "Find Me Word",
+        "type": "string",
+        "default": "where are you",
+        "description": "Used for naming the Find Me switch. E.g: Hey Siri, NameOfYourVacuum where are you",
+        "condition": {
+          "functionBody": "return model.findMe === true"
+        }
+      },
+      "dock": {
+        "title": "Show Dock Sensor",
+        "type": "boolean",
+        "default": true,
+        "description": "When enabled, HomeKit shows an occupancy sensor for dock status"
+      },
+      "waterBox": {
+        "title": "Enable Water Box Control",
+        "type": "boolean",
+        "default": true,
+        "description": "When enabled, HomeKit shows controls for water level/scrub intensity (for mopping-capable models)"
+      },
+      "cleanword": {
+        "title": "Cleaning Word",
+        "type": "string",
+        "default": "cleaning",
+        "description": "Used for autonaming room selectors. E.g: 'cleaning Living Room'"
+      },
+      "roomTimeout": {
+        "title": "Room Autoclean Timeout",
+        "type": "integer",
+        "default": 0,
+        "description": "When set above 0, will initiate room cleaning automatically after the given time in seconds (allows you to select multiple rooms before starting)"
+      },
+      "rooms": {
+        "title": "Room Cleaning",
+        "type": "array",
+        "description": "Array of rooms for room cleaning. Each room needs an ID and name.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "title": "Room ID",
+              "type": "integer",
+              "description": "Room ID from Roborock app"
+            },
+            "name": {
+              "title": "Room Name",
+              "type": "string",
+              "description": "Display name for the room"
+            }
+          },
+          "required": ["id", "name"]
+        }
+      },
+      "zones": {
+        "title": "Zone Cleaning",
+        "type": "array",
+        "description": "Array of zones for zone cleaning",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "title": "Zone Name",
+              "type": "string",
+              "required": true
+            },
+            "zone": {
+              "title": "Zone Coordinates",
+              "type": "array",
+              "description": "Array of zone coordinates. Each zone: [bottom-left X, bottom-left Y, top-right X, top-right Y, # of cleanings]",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 5,
+                "maxItems": 5,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "required": ["name", "zone"]
+        }
+      }
+    },
+    "required": ["email", "password"]
+  },
+  "layout": [
+    "email",
+    "password",
+    {
+      "type": "flex",
+      "flex-flow": "row wrap",
+      "items": ["baseURL", "debugMode"]
+    },
+    "serviceType",
+    "pause",
+    {
+      "type": "flex",
+      "flex-flow": "row wrap",
+      "items": ["pauseWord"]
+    },
+    "findMe",
+    {
+      "type": "flex",
+      "flex-flow": "row wrap",
+      "items": ["findMeWord"]
+    },
+    "dock",
+    "waterBox",
+    "cleanword",
+    "roomTimeout",
+    {
+      "type": "fieldset",
+      "title": "Rooms",
+      "description": "Room Mapping",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        {
+          "notitle": true,
+          "key": "rooms",
+          "type": "array",
+          "items": [
+            {
+              "type": "div",
+              "displayFlex": true,
+              "flex-direction": "row",
+              "items": [
+                {
+                  "key": "rooms[].id",
+                  "flex": "1 1 50px",
+                  "notitle": true,
+                  "placeholder": "Room ID"
+                },
+                {
+                  "key": "rooms[].name",
+                  "flex": "4 4 200px",
+                  "notitle": true,
+                  "placeholder": "Room Name"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "title": "Zones",
+      "description": "Zone cleaning",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        {
+          "notitle": true,
+          "key": "zones",
+          "type": "array",
+          "items": [
+            {
+              "type": "div",
+              "displayFlex": true,
+              "flex-direction": "row",
+              "items": [
+                {
+                  "key": "zones[].name",
+                  "flex": "1 1 100px",
+                  "placeholder": "Zone Name"
+                },
+                {
+                  "key": "zones[].zone",
+                  "notitle": true,
+                  "flex": "4 4 150px",
+                  "type": "array",
+                  "items": [
+                    {
+                      "key": "zones[].zone[]",
+                      "type": "array",
+                      "displayFlex": true,
+                      "flex-direction": "row",
+                      "items": [
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

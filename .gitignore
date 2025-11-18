@@ -1,0 +1,72 @@
+# Build output
+dist/
+*.js.map
+*.map
+
+# Dependencies
+node_modules/
+# Note: package-lock.json is usually kept for npm packages, but uncomment if you want to ignore it
+# package-lock.json
+yarn.lock
+
+# User data and credentials
+userdata.json
+UserData/
+clientID
+roborockLib/data/
+roborockLib/data/UserData
+roborockLib/data/clientID
+roborockLib/userdata.json
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Test files
+test.js
+*.test.js
+*.spec.js
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Documentation files (optional - uncomment if you don't want these in repo)
+SECURITY_CHECK.md
+BUILD_AND_TEST.md
+DEPLOY_TO_DOCKER.md
+ENHANCEMENTS.md
+FEATURE_ADDITION_GUIDE.md
+IMPROVEMENTS_FROM_PYTHON_LIBRARY.md
+TESTING_CHECKLIST.md
+V8_FEATURES.md
+ALL_FEATURES_IMPLEMENTED.md
+COMPREHENSIVE_FEATURES_PLAN.md
+REMOVE_FILES_FROM_GIT.md
